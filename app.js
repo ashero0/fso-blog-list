@@ -1,7 +1,23 @@
+const config = require('./utils/config')
 const express = require('express')
 const app = express()
 const cors = require('cors')
+// const notesRouter = require('./controllers/notes')
+// const middleware = require('./utils/middleware')
+// const logger = require('./utils/logger')
 const mongoose = require('mongoose')
+
+// mongoose.set('strictQuery', false)
+
+// logger.info('connecting to', config.MONGODB_URI)
+
+// mongoose.connect(config.MONGODB_URI)
+//   .then(() => {
+//     logger.info('connected to MongoDB')
+//   })
+//   .catch((error) => {
+//     logger.error('error connection to MongoDB:', error.message)
+//   })
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -12,11 +28,14 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoUrl)
+mongoose.connect(config.MONGODB_URI)
 
 app.use(cors())
+// app.use(express.static('dist))
 app.use(express.json())
+// app.use(middleware.requestLogger)
+
+// app.use('api/notes', notesRouter)
 
 app.get('/api/blogs', (request, response) => {
   Blog
@@ -32,11 +51,11 @@ app.post('/api/blogs', (request, response) => {
   blog
     .save()
     .then(result => {
-      response.status(201).json(result)
+      response.json(result)
     })
 })
 
-const PORT = 3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+// app.use(middleware.unknownEndpoint)
+// app.use(middleware.errorHandler)
+
+module.exports = app
